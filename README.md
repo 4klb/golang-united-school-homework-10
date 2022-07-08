@@ -19,7 +19,7 @@ If not defined in table:
 Request will be:
 * No body set
 * No headers set
-Response expected to have 
+Response expected to have  
 * Status: 200 OK  
 * Empty body
 
