@@ -24,6 +24,7 @@ func Start(host string, port int) {
 	router.HandleFunc("/name/{PARAM}", GetParam)
 	router.HandleFunc("/bad", Bad)
 	router.HandleFunc("/data", PostParam)
+	router.HandleFunc("/headers", PostHeaders)
 
 	fmt.Printf("Starting API server on %s:%d\n", host, port)
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), router); err != nil {
@@ -58,14 +59,25 @@ func PostParam(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(fmt.Sprintf("I got message:\n%v", string(body)))) // creates concatination
+	w.Write([]byte(fmt.Sprintf("I got message:\n%v", string(body))))
 }
 
-// func G(w http.ResponseWriter, r *http.Request) {
-// 	body, err := ioutil.ReadAll(r.Body)
-// 	if err != nil {
-// 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-// 		return
-// 	}
-// 	w.Write([]byte(fmt.Sprintf("I got message:\n%v", string(body)))) // creates concatination
-// }
+func PostHeaders(w http.ResponseWriter, r *http.Request) {
+	headers := r.Header
+	a := headers["A"]
+	b := headers["B"]
+
+	f, err := strconv.Atoi(a[0])
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	s, err := strconv.Atoi(b[0])
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Add("a+b", fmt.Sprintf("%v", f+s))
+}
